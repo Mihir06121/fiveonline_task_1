@@ -74,6 +74,8 @@ const RegistrationForm = () => {
         setCounter(counter + 1)
     }
 
+    const base64Checker = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/
+
     const handleSubmit = ({companyName, workEmailId, noOfEmployees, registeredName, registeredLocation, avgAgeEmployee, coverageForPeople, mobileNumber}) => {
             
         const doc = new jsPDF();
@@ -81,6 +83,7 @@ const RegistrationForm = () => {
         doc.html(element, {
             callback: function (pdf) {
                 const pdfFile = pdf.output('datauristring')
+                console.log(base64Checker.test(pdfFile.split(',')[1]))
                 fetch(`http://localhost:8000/api/form-submit`, {
                     method: "POST",
                     headers: {
@@ -95,18 +98,6 @@ const RegistrationForm = () => {
             }
         })
     }
-
-    
-    const generatePDF = () => {
-        const doc = new jsPDF();
-        const element = document.getElementById('content')
-        doc.html(element, {
-            callback: function (pdf) {
-            // pdf.save('generated_pdf.pdf')
-            pdf.output('blob')
-            },
-        });
-    };
 
     return (
         <div className="container-fluid d-flex justify-content-center align-items-center">
@@ -344,7 +335,6 @@ const RegistrationForm = () => {
                                 <div className="fs-4">Mobile no for OTP: {mobileNumber}</div>
                             </div>
                         </div>
-                        <button onClick={() => generatePDF()}>Generate PDF</button>
                     </div>
                 {error ? <div align="center" className="card text-white fs-4 my-3 col-12 bg-danger">{errorMessage}</div> : null}
                 <div className="d-flex justify-content-end align-items-center">
