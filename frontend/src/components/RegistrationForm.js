@@ -44,7 +44,7 @@ const RegistrationForm = () => {
         errorMessage
     } = formData
 
-    const [counter, setCounter] = useState(0)
+    const [counter, setCounter] = useState(4)
 
     const [dummyOtp, setDummyOtp] = useState(Math.floor(1000 + Math.random() * 9000))
 
@@ -78,18 +78,18 @@ const RegistrationForm = () => {
 
     const handleSubmit = ({companyName, workEmailId, noOfEmployees, registeredName, registeredLocation, avgAgeEmployee, coverageForPeople, mobileNumber}) => {
             
-        const doc = new jsPDF();
+        const doc = new jsPDF('l','mm',[1000, 500]);
         const element = document.getElementById('content')
         doc.html(element, {
             callback: function (pdf) {
                 const pdfFile = pdf.output('datauristring')
-                console.log(base64Checker.test(pdfFile.split(',')[1]))
+                let slicedPdf = pdfFile.split(',')[1]
                 fetch(`http://localhost:8000/api/form-submit`, {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({pdfFile, companyName, workEmailId, noOfEmployees, registeredName, registeredLocation, avgAgeEmployee, coverageForPeople, mobileNumber})
+                    body: JSON.stringify({slicedPdf, companyName, workEmailId, noOfEmployees, registeredName, registeredLocation, avgAgeEmployee, coverageForPeople, mobileNumber})
                 }).then(res => {
                     console.log(res.json())
                 }).catch(err => {
@@ -321,20 +321,22 @@ const RegistrationForm = () => {
                 </div>
                 </Collapse>
                 <Collapse in={counter === 4}>
+                    <div className="container-fluid">
                     <div id="content">
                         <div className="card border-dark p-3">
                             <div align="center" className="fs-2">Registered details</div>
                             <div>
-                                <div className="fs-4">Company Name: {companyName}</div>
-                                <div className="fs-4">Work Email Id: {workEmailId}</div>
-                                <div className="fs-4">Your Name: {registeredName}</div>
-                                <div className="fs-4">No of Employees: {noOfEmployees}</div>
-                                <div className="fs-4">Your Location: {registeredLocation}</div>
-                                <div className="fs-4">Average Age of Employees: {avgAgeEmployee}</div>
-                                <div className="fs-4">Coverage For: {coverageForPeople}, {coverageForAmount}</div>
-                                <div className="fs-4">Mobile no for OTP: {mobileNumber}</div>
+                                <div className="">Company Name: {companyName}</div>
+                                <div className="">Work Email Id: {workEmailId}</div>
+                                <div className="">Your Name: {registeredName}</div>
+                                <div className="">No of Employees: {noOfEmployees}</div>
+                                <div className="">Your Location: {registeredLocation}</div>
+                                <div className="">Average Age of Employees: {avgAgeEmployee}</div>
+                                <div className="">Coverage For: {coverageForPeople}, {coverageForAmount}</div>
+                                <div className="">Mobile no for OTP: {mobileNumber}</div>
                             </div>
                         </div>
+                    </div>
                     </div>
                 {error ? <div align="center" className="card text-white fs-4 my-3 col-12 bg-danger">{errorMessage}</div> : null}
                 <div className="d-flex justify-content-end align-items-center">
